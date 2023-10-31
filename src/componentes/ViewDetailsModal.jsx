@@ -18,15 +18,15 @@ function ViewDetailsModal({ setShowDetailsModal, data, type }) {
                         </button>
                     </div>
                     <div className='flex items-center justify-center'>
-                        {type === "volunteers" ? (<div className='flex w-[28rem] font-semibold text-xl flex-col justify-between my-8'>
-                            <p className='flex justify-between'>
-                                Name: <span className='w-[50%] text-left'> {data.name}</span>
+                        {type === "volunteers" ? (<div className='flex w-full font-semibold text-xl flex-col justify-center my-8'>
+                            <p className='flex w-full justify-between'>
+                                Name: <span className='w-[60%] text-left'> {data.name}</span>
                             </p>
                             <p className='flex justify-between'>
-                                Contact Information: <span className='w-[50%] text-left'>{data.contactInformation}</span>
+                                Contact Information: <span className='w-[60%] text-left'>{data.contactInformation}</span>
                             </p>
                             <p className='flex justify-between'>
-                                Skills: <span className='w-[50%] text-left'>{data.skills.map((item, index) => (
+                                Skills: <span className='w-[60%] text-left'>{data.skills.map((item, index) => (
                                     <React.Fragment key={item}>
                                         {item}
                                         {index < data.skills.length - 1 && ', '}
@@ -34,10 +34,10 @@ function ViewDetailsModal({ setShowDetailsModal, data, type }) {
                                 ))}</span>
                             </p>
                             <p className='flex justify-between'>
-                                Availability: <span>{data.availability}</span>
+                                Availability: <span className='w-[60%] text-left'>{data.availability}</span>
                             </p>
                             <p className='flex justify-between'>
-                                Areas Of Intrest: <span className='w-[50%] text-left'>{data.areasOfInterest.map((item, index) => (
+                                Areas Of Intrest: <span className='w-[60%] text-left'>{data.areasOfInterest.map((item, index) => (
                                     <React.Fragment key={item}>
                                         {item}
                                         {index < data.areasOfInterest.length - 1 && ', '}
@@ -45,7 +45,7 @@ function ViewDetailsModal({ setShowDetailsModal, data, type }) {
                                 ))}</span>
                             </p>
                             <p className='flex justify-between'>
-                                Events: <span>{data.events.map(item => {
+                                Events: <span className='w-[60%] text-left'>{data.events.map(item => {
                                     const date = new Date(item.date)
                                     return (<div className="flex flex-col items-start text-md" key={item._id}>
                                         <p>Name: {item.name}</p>
