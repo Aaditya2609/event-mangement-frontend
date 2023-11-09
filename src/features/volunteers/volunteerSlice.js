@@ -100,7 +100,7 @@ export const volunteersSlice = createSlice({
     [deleteVolunteerAsync.fulfilled]: (state, action) => {
       state.status = "success";
       state.volunteers = state.volunteers.filter(
-        (volunteer) => volunteer._id !== action.payload.volunteer._id
+        (volunteer) => volunteer._id !== action.payload._id
       );
     },
     [deleteVolunteerAsync.rejected]: (state, action) => {

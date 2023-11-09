@@ -100,7 +100,7 @@ export const eventsSlice = createSlice({
     [deleteEventAsync.fulfilled]: (state, action) => {
       state.status = "success";
       state.events = state.events.filter(
-        (event) => event._id !== action.payload.event._id
+        (event) => event._id !== action.payload._id
       );
     },
     [deleteEventAsync.rejected]: (state, action) => {
