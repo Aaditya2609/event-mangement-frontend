@@ -98,7 +98,7 @@ export const volunteersSlice = createSlice({
       state.status = "loading";
     },
     [deleteVolunteerAsync.fulfilled]: (state, action) => {
-      state.status = "success";
+      state.status = "idle";
       state.volunteers = state.volunteers.filter(
         (volunteer) => volunteer._id !== action.payload._id
       );

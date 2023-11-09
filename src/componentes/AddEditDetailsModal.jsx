@@ -4,6 +4,7 @@ import { addVolunteerAsync, fetchVolunteers, updateVolunteerAsync } from '../fea
 import { addEventAsync, updateEventAsync } from '../features/events/eventSlice';
 
 function AddEditDetailsModal({ setShowAddEditDetailModal, type, data, action }) {
+    const [editVolunteerId,setEditVolunteerId]=useState("");
     const [tempVolunteer, setTempVolunteer] = useState({
         name: "",
         contactInformation: "",
@@ -39,6 +40,7 @@ function AddEditDetailsModal({ setShowAddEditDetailModal, type, data, action }) 
         if (action === "edit" && data) {
             if (type === "volunteer") {
                 const { _id, ...tempVolunteerWithoutId } = data;
+                setEditVolunteerId(_id);
                 setTempVolunteer(tempVolunteerWithoutId);
             } else if (type === "event") {
                 const { _id, ...tempEventWithoutId } = data;
@@ -51,27 +53,44 @@ function AddEditDetailsModal({ setShowAddEditDetailModal, type, data, action }) 
         setNotRegisteredEvents(events.filter(item => !tempVolunteer.events.some(tempEvent => tempEvent._id === item._id)))
     }, [tempVolunteer, events])
 
+
     const handleAddEdit = () => {
         if (type === "volunteer") {
             console.log(tempVolunteer)
             if (tempVolunteer.name !== "" && tempVolunteer.contactInformation !== "" && tempVolunteer.skills.length > 0) {
                 if (action === "add") {
-                    const eventIds = tempVolunteer.events.map((event) => {
-                        return event._id;
-                    });
-                    const updatedTempVolunteer = { ...tempVolunteer };
-                    updatedTempVolunteer.events = eventIds;
-                    setTempVolunteer(updatedTempVolunteer);
                     dispatch(addVolunteerAsync(tempVolunteer));
+
                 } else if (action === "edit") {
-                    const eventIds = tempVolunteer.events.map((event) => {
-                        return event._id;
-                    });
+                    // Extract event IDs
+                    const eventIds = tempVolunteer.events.map((event) => event._id);
+                  
+                    // Update tempVolunteer with event IDs
                     const updatedTempVolunteer = { ...tempVolunteer };
                     updatedTempVolunteer.events = eventIds;
                     setTempVolunteer(updatedTempVolunteer);
-                    dispatch(updateVolunteerAsync({ id: data._id, updatedVolunteer: tempVolunteer }));
-                }
+                  
+                    // Update events and dispatch actions
+                    tempVolunteer.events.map( (event) => {
+                      // Extract volunteer IDs
+                      const volunteerIds = event.registeredVolunteers.map((volunteer) => volunteer._id);
+                  
+                      
+                      volunteerIds.push(editVolunteerId);
+                      console.log("volunteer IDs",volunteerIds)
+                  
+                      // Create a new object with the updated registeredVolunteers property
+                      const updatedEvent = { ...event, registeredVolunteers: volunteerIds };
+                  
+                      // Dispatch updateEventAsync action
+                      return dispatch(updateEventAsync({ id: event._id, updatedEvent }));
+                    });
+                  
+                    // Dispatch updateVolunteerAsync action
+                    dispatch(updateVolunteerAsync({ id: data._id, updatedVolunteer: updatedTempVolunteer }));
+                  }
+                  
+                  
                 dispatch(fetchVolunteers());
                 setShowAddEditDetailModal(false);
             } else {
@@ -165,6 +184,19 @@ function AddEditDetailsModal({ setShowAddEditDetailModal, type, data, action }) 
                                     value={tempVolunteer.contactInformation}
                                 ></input>
                             </label>
+                            <label className="flex gap-4 m-2 px-6 w-full justify-between">
+                                Availability:
+                                <select
+                                    className="border-2 border-black rounded-md px-2 py-1"
+                                    onChange={(e) => setTempVolunteer({ ...tempVolunteer, availability: e.target.value })}
+                                    value={tempVolunteer.availability}
+                                >
+                                    <option value={""}>None</option>
+                                    <option value={"Weekdays"}>Weekdays</option>
+                                    <option value={"Weekends"}>Weekends</option>
+                                    <option value={"Evenings"}>Evenings</option>
+                                </select>
+                            </label>
                             <div>
                                 (Press enter to add multiple skills and areas of interests)
                             </div>
@@ -232,7 +264,7 @@ function AddEditDetailsModal({ setShowAddEditDetailModal, type, data, action }) 
                                 </div>
 
                             </div>
-                            <label className="flex gap-4 m-2 px-6 w-full justify-between">
+                            {action!=="add"?(<div><label className="flex gap-4 m-2 px-6 w-full justify-between">
                                 Registered Events:
                                 <select
                                     className="border-2 border-black rounded-md px-2 py-1"
@@ -256,7 +288,7 @@ function AddEditDetailsModal({ setShowAddEditDetailModal, type, data, action }) 
                                 </button>
                             </div>)}
 
-                            </div>
+                            </div></div>):(<div></div>)}
                         </div>
                     ) : (
                         <div className="flex flex-col">

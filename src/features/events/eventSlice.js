@@ -27,6 +27,7 @@ export const addEventAsync = createAsyncThunk(
 export const updateEventAsync = createAsyncThunk(
   "events/updateEventAsync",
   async ({ id, updatedEvent }) => {
+    console.log(id,updatedEvent)
     const response = await axios.post(
       `https://event-management-8q3o.onrender.com/api/event/update/${id}`,
       updatedEvent
@@ -83,7 +84,7 @@ export const eventsSlice = createSlice({
       state.status = "loading";
     },
     [updateEventAsync.fulfilled]: (state, action) => {
-      state.status = "success";
+      state.status = "idle";
       const updatedEvent = action.payload;
       const index = state.events.findIndex((s) => s._id === updatedEvent._id);
       if (index !== -1) {
@@ -98,7 +99,7 @@ export const eventsSlice = createSlice({
       state.status = "loading";
     },
     [deleteEventAsync.fulfilled]: (state, action) => {
-      state.status = "success";
+      state.status = "idle";
       state.events = state.events.filter(
         (event) => event._id !== action.payload._id
       );
